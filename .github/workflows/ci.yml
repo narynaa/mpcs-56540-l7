@@ -1,6 +1,9 @@
 name: CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -35,7 +38,22 @@ jobs:
       - name: Run Wikipedia E2E test
         run: |
           npx playwright test wikipedia.spec.js
+
       - uses: grafana/setup-k6-action@v1
 
-      - name: load test
-        run: k6 run wikipedia-load-test.js
+      - name: Load test
+        run: |
+          k6 run wikipedia-load-test.js
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: Production
+
+    steps:
+      - name: Fake deploy
+        run: |
+          echo "Deployment approved!"
+          echo "Pretending to deploy application to production..."
